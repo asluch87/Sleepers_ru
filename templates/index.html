@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="search-form">
+    <form method="GET">
+        <input type="text" name="search" placeholder="Поиск товаров..." value="{{ search }}">
+        <input type="number" name="min_price" placeholder="Цена от" value="{{ min_price }}">
+        <input type="number" name="max_price" placeholder="Цена до" value="{{ max_price }}">
+        <button type="submit">Найти</button>
+    </form>
+</div> 
+
+<div class="products-grid">
+    {% for product in products %}
+    <div class="product-card">
+        {% if product[12] %}
+           <a href="{{ url_for('product_detail', product_id=product[0]) }}">
+            <img src="{{ product[12] }}" alt="{{ product[1] }}" class="product-image" style="max-width: 250px; max-height: 130px;">
+        </a>
+        {% endif %}
+        <h3>{{ product[1] }}</h3>
+        <p class="price">{{ product[3] }} руб.</p>
+        <p class="stock">В наличии: {{ product[4] }} шт.</p>
+        <p class="supplier">Поставщик: {{ product[5] }}</p>
+        
+        <div class="product-actions">
+            <a href="{{ url_for('product_detail', product_id=product[0]) }}" class="btn">Подробнее</a>
+            
+   {% if session.id %}
+<form method="POST" action="{{ url_for('create_order_route', product_id=product[0]) }}">
+    <input type="number" name="quantity" value="1" min="1" max="{{ product[5] }}">
+    <button type="submit">Заказать</button>
+</form>
+{% else %}
+<p><a href="{{ url_for('login') }}">Войдите</a> чтобы сделать заказ</p>
+{% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

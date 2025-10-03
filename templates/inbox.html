@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="cart-container">
+    <div class="cart-header">
+        <h1>🛒 Корзина покупок</h1>
+    </div>
+    
+    {% if basket_items %}
+    <div class="cart-table">
+        <div class="cart-table-header">
+            <div class="col-product">Товар</div>
+            <div class="col-price">Цена</div>
+            <div class="col-quantity">Количество</div>
+            <div class="col-total">Сумма</div>
+        </div>
+         
+        <div class="cart-items">
+            {% for item in basket_items %}
+            <div class="cart-item">
+                <div class="col-product">
+                    <div class="product-info">
+                        <div class="product-name">{{ item[1] }}</div>
+                        <div class="product-supplier">Поставщик: {{ item[5] }}</div>
+                    </div>
+                </div>
+                <div class="col-price">
+                    <span class="price">{{ item[4] }} ₽</span>
+                </div>
+                <div class="col-quantity">
+                    <span class="quantity">{{ item[5] }} шт.</span>
+                </div>
+                <div class="col-total">
+                    <span class="item-total">{{ item[4] * item[5] }} ₽</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="cart-footer">
+            <div class="cart-summary">
+                <div class="summary-row">
+                    <span>Итого:</span>
+                    <span class="total-amount">{{ total }} ₽</span>
+                </div>
+            </div>
+            
+            <div class="cart-actions">
+                <a href="{{ url_for('index') }}" class="btn-continue">← Продолжить покупки</a>
+                <button class="btn-checkout">Оформить заказ →</button>
+            </div>
+        </div>
+    </div>
+    
+    {% else %}
+    <div class="empty-cart">
+        <div class="empty-icon">🛒</div>
+        <h2>Ваша корзина пуста</h2>
+        <p>Добавьте товары из каталога</p>
+        <a href="{{ url_for('index') }}" class="btn-primary">Перейти к покупкам</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

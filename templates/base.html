@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>B2B Тапочки Оптом</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <h1><a href="{{ url_for('index') }}">B2B Тапочки</a></h1>
+            <div class="nav-links">
+    {% if session.id %}
+        <span class="user-badge">{{ session.first_name }}</span>
+        <a href="{{ url_for('inbox') }}" class="nav-item">
+            <span class="nav-icon">🛒</span>
+            Корзина
+        </a>
+        <a href="{{ url_for('logout') }}" class="nav-item">
+            <span class="nav-icon">⏻</span>
+            Выйти
+        </a>
+    {% else %}
+        <a href="{{ url_for('login') }}" class="nav-item">
+            <span class="nav-icon">→</span>
+            Войти
+        </a>
+        <a href="{{ url_for('register') }}" class="nav-item primary">
+            <span class="nav-icon">+</span>
+            Регистрация
+        </a> 
+    {% endif %}
+
+    {% if session.role_id == 2 %}
+    <a href="{{ url_for('admin') }}" class="nav-item admin-panel">
+        <span class="nav-icon">⚙️</span>
+        Админ-панель
+    </a>
+    {% endif %}
+
+
+
+</div>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
