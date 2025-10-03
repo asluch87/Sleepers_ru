@@ -17,11 +17,11 @@
            <a href="{{ url_for('product_detail', product_id=product[0]) }}">
             <img src="{{ product[12] }}" alt="{{ product[1] }}" class="product-image" style="max-width: 250px; max-height: 130px;">
         </a>
-        {% endif %}
+        {% endif %} 
         <h3>{{ product[1] }}</h3>
         <p class="price">{{ product[3] }} руб.</p>
         <p class="stock">В наличии: {{ product[4] }} шт.</p>
-        <p class="supplier">Поставщик: {{ product[5] }}</p>
+        <p class="supplier">Поставщик: {{ product[11] }}</p>
         
         <div class="product-actions">
             <a href="{{ url_for('product_detail', product_id=product[0]) }}" class="btn">Подробнее</a>
