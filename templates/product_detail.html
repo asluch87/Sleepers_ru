@@ -14,7 +14,7 @@
         <p class="supplier">Поставщик: {{ product[10] }}</p>
         <p class="description">{{ product[3] }}</p>
          
-        {% if session.user_id %}
+        {% if session.id %}
         <form method="POST" action="{{ url_for('create_order_route', product_id=product[0]) }}" class="order-form">
             <label>Количество:</label>
             <input type="number" name="quantity" value="1" min="1" max="{{ product[5] }}">

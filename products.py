@@ -48,6 +48,7 @@ def get_basket_items(user_id):
     ''', (user_id,))
     basket_items = cur.fetchall()
     total = sum(item[4] * item[5] for item in basket_items)
+    quantity = basket_items[13]
     cur.close()
     conn.close()
     return basket_items, total
