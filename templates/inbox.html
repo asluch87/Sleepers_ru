@@ -13,25 +13,35 @@
             <div class="col-price">Цена</div>
             <div class="col-quantity">Количество</div>
             <div class="col-total">Сумма</div>
+            <div class="col-actions">Удалить</div>  
         </div>
          
         <div class="cart-items">
             {% for item in basket_items %}
+            {% set product = item[0] %}
+            {% set quantity = item[1] %}
             <div class="cart-item">
                 <div class="col-product">
                     <div class="product-info">
-                        <div class="product-name">{{ item[1] }}</div>
-                        <div class="product-supplier">Поставщик: {{ item[5] }}</div>
+                        <div class="product-name">{{ product.name }}</div>
+                        <div class="product-supplier">Поставщик: {{ product.supplier }}</div>
                     </div>
                 </div>
                 <div class="col-price">
-                    <span class="price">{{ item[4] }} ₽</span>
+                    <span class="price">{{ product.price }} ₽</span>
                 </div>
                 <div class="col-quantity">
-                    <span class="quantity">{{ item[13] }} шт.</span>
+                    <span class="quantity">{{ quantity }} шт.</span> 
                 </div>
                 <div class="col-total">
-                    <span class="item-total">{{ item[4] * item[5] }} ₽</span>
+                    <span class="item-total">{{ (product.price * quantity) | round(2) }} ₽</span>
+                </div>
+                <div class="col-actions">
+                    <form method="POST" action="{{ url_for('delete_from_basket', product_id=product.id) }}" style="display: inline;">
+                        <button type="submit" class="btn-delete" onclick="return confirm('Удалить товар из корзины?')">
+                            🗑️ Удалить
+                        </button>
+                    </form>
                 </div>
             </div>
             {% endfor %}
@@ -47,7 +57,7 @@
             
             <div class="cart-actions">
                 <a href="{{ url_for('index') }}" class="btn-continue">← Продолжить покупки</a>
-                <button class="btn-checkout">Оформить заказ →</button>
+                <a href="{{ url_for('delivery_Payment') }}" class="btn-checkout">Оформить Заказ</a>
             </div>
         </div>
     </div>

@@ -1,84 +1,61 @@
 # %s -Параметр передаваемый в запрос , чтобы чне лазить в гугл пишу тут.
 
 from database import get_db_connection
+from models.user import User
+from models.product import Product
+from sqlalchemy import or_
 
-def get_products(search='', min_price='', max_price=''):
-    conn = get_db_connection()
-    cur = conn.cursor()
+def get_products(search='', min_price='', max_price=''): # Получение всех проудктов для магазина страницы товаров
+    Session_DB = get_db_connection()
     
-    query = "SELECT * FROM products WHERE 1=1"
-    params = []
-    
-    if search:
-        query += " AND (name ILIKE %s OR description ILIKE %s)"
-        params.extend([f'%{search}%', f'%{search}%'])
-    
-    if min_price:
-        query += " AND price >= %s"
-        params.append(float(min_price))
-    
-    if max_price:
-        query += " AND price <= %s" 
-        params.append(float(max_price))
-    
-    query += " ORDER BY id DESC"
-    cur.execute(query, params)
-    products = cur.fetchall()
-    
-    cur.close()
-    conn.close()
-    return products
+    try:
+        # Начинаем запрос
+       
+        query = Session_DB.query(Product).filter(Product.is_active == True)
+        # Добавляем условия фильтрации
+        if search:
+            query = query.filter(
+                or_(
+                    Product.name.ilike(f'%{search}%'),
+                    Product.description.ilike(f'%{search}%')
+                )
+            )
+        
+        if min_price:
+            query = query.filter(Product.price >= float(min_price))
+        
+        if max_price:
+            query = query.filter(Product.price <= float(max_price))
+        
+        # Сортировка и выполнение запроса
+        products = query.order_by(Product.id.desc()).all()
+        
+        return products
+        
+    except Exception as e:
+        print(f"Ошибка при получении продуктов: {e}")
+        return []
+    finally:
+        Session_DB.close()
 
-def get_product(product_id):
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute('SELECT * FROM products WHERE id = %s', (product_id,))
-    product = cur.fetchone()
-    cur.close()
-    conn.close()
-    return product
 
-def get_basket_items(user_id):
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute('''
-        SELECT p.*, b.quantity FROM basket b 
-        JOIN products p ON b.product_id = p.id 
-        WHERE b.user_id = %s 
-    ''', (user_id,))
-    basket_items = cur.fetchall()
-    total = sum(item[4] * item[5] for item in basket_items)
-    quantity = basket_items[13]
-    cur.close()
-    conn.close()
-    return basket_items, total
+def get_product(product_id): # Получение одного продукта
+    try:
+        Session_BD = get_db_connection()
+        query = Session_BD.query(Product).filter(
+            Product.id == product_id, 
+            Product.is_active == True  # ← И ЗДЕСЬ ТОЖЕ
+        ).first()
+        if query:
+        
+            return query
+        else:
+            return None
+    finally:
+        Session_BD.close()     
 
-def create_order_product(user_id, product_id, quantity):
-    conn = get_db_connection()
-    cur = conn.cursor()
-    
-    # Проверяем наличие
-    cur.execute('SELECT stock_quantity FROM products WHERE id = %s', (product_id,))
-    product = cur.fetchone()
-    
-    if not product or product[0] < quantity:
-        return False
-     
-    # Добавляем в корзину
-    cur.execute('''
-            INSERT INTO basket (user_id, product_id, quantity) 
-            VALUES (%s, %s, %s)
-            ON CONFLICT (user_id, product_id) 
-            DO UPDATE SET quantity = basket.quantity + EXCLUDED.quantity
-        ''', (user_id, product_id, quantity))
-    
-    # Обновляем остатки
-    cur.execute('UPDATE products SET stock_quantity = stock_quantity - %s WHERE id = %s',
-               (quantity, product_id))
-    
-    conn.commit()
-    cur.close()
-    conn.close()
-    return True
+
+
+
 
 

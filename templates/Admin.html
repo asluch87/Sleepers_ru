@@ -3,32 +3,38 @@
 {% block content %}
 <div class="admin-container">
     <div class="admin-header">
-        <h1> Админ-панель</h1>
+        <h1>Админ-панель</h1>
         <p>Управление магазином</p>
     </div>
 
-    
-    <div class="admin-links">
-        <a href="#products" class="admin-link active">📦 Товары</a>
-        <a href="#users" class="admin-link">👥 Пользователи</a>
-        <a href="#add-product" class="admin-link">➕ Добавить товар</a>
-    </div>
- 
-    
-    <div id="products" class="admin-section">
+    <!-- Скрытые чекбоксы для переключения разделов -->
+    <input type="radio" name="admin-section" id="products-tab" checked hidden>
+    <input type="radio" name="admin-section" id="users-tab" hidden>
+    <input type="radio" name="admin-section" id="add-product-tab" hidden>
+    <input type="radio" name="admin-section" id="add-user-tab" hidden>
+
+<div class="admin-links">
+    <label for="products-tab" class="admin-link">📦 Товары</label>
+    <label for="users-tab" class="admin-link">👥 Пользователи</label>
+    <label for="add-product-tab" class="admin-link">➕ Добавить товар</label>
+    <label for="add-user-tab" class="admin-link">➕ Добавить пользователя</label>
+</div>
+
+    <!-- Раздел товаров -->
+    <div class="admin-section" data-section="products">
         <h2>Управление товарами</h2>
         <div class="products-list">
             {% for product in products %}
             <div class="product-card admin-card">
                 <div class="product-info">
-                    <h3>{{ product[1] }}</h3>
-                    <p><strong>Цена:</strong> {{ product[3] }} руб.</p>
-                    <p><strong>Остаток:</strong> {{ product[4] }} шт.</p>
-                    <p><strong>Поставщик:</strong> {{ product[5] }}</p>
+                    <h3>{{ product.name }}</h3>
+                    <p><strong>Цена:</strong> {{ product.price }} руб.</p>
+                    <p><strong>Остаток:</strong> {{ product.stock_quantity }} шт.</p>
+                    <p><strong>Поставщик:</strong> {{ product.supplier }}</p>
                 </div>
                 <div class="product-actions">
-                    <a href="/edit_product/{{ product[0] }}" class="btn-edit">✏️ Изменить</a>
-                    <a href="/delete_product/{{ product[0] }}" class="btn-delete" 
+                    <a href="/edit_product/{{ product.id }}" class="btn-edit">✏️ Изменить</a>
+                    <a href="/delete_product/{{ product.id }}" class="btn-delete" 
                        onclick="return confirm('Удалить этот товар?')">🗑️ Удалить</a>
                 </div>
             </div>
@@ -37,20 +43,20 @@
     </div>
 
     <!-- Раздел пользователей -->
-    <div id="users" class="admin-section">
+    <div class="admin-section" data-section="users">
         <h2>Управление пользователями</h2>
-        <div class="users-list">
+           <div class="users-list">
             {% for user in users %}
             <div class="user-card admin-card">
                 <div class="user-info">
-                    
-                    <p><strong>Email:</strong> {{ user[1] }}</p>
-                    <p><strong>ID:</strong> {{ user[0] }}</p>
-                    <p><strong>Админ:</strong>  {% if user[6] == 2 %}Да {% else %}Нет{% endif %}</p>
+                    <h3>{{ user.first_name }} {{ user.last_name }}</h3>
+                    <p><strong>Email:</strong> {{ user.email }}</p>
+                    <p><strong>ID:</strong> {{ user.id }}</p>
+                    <p><strong>Админ:</strong> {% if user.role_id == 2 %}Да {% else %}Нет{% endif %}</p>
                 </div>
                 <div class="user-actions">
-                    <a href="/edit_user/{{ user[0] }}" class="btn-edit">✏️ Изменить</a>
-                    <a href="/delete_user/{{ user[0] }}" class="btn-delete"
+                    <a href="/edit_user/{{ user.id }}" class="btn-edit">✏️ Изменить</a>
+                    <a href="/delete_user/{{ user.id }}" class="btn-delete"
                        onclick="return confirm('Удалить этого пользователя?')">🗑️ Удалить</a>
                 </div>
             </div>
@@ -59,29 +65,7 @@
     </div>
 
     <!-- Раздел добавления товара -->
-    <div id="add-product" class="admin-section">
-        <h2>Добавить нового пользователя</h2>
-        <form method="POST" action="{{ url_for('add_product') }}" class="admin-form">
-            <div class="form-group">
-                <labelИмя пользователя:</label>
-                <input type="text" name="name" required>
-            </div>
-            <div class="form-group">
-                <label>Пароль:</label>
-                <input type="text" name="name" required>
-            </div>
-            <div class="form-group">
-                <label>Email:</label>
-                <input type="text" name="name" required>
-            </div>
-            <button type="submit" class="btn-submit">➕ Добавить ПОЛЬЗОВАТЕЛЯ</button>
-        </form>
-    </div>
-
-
-
-        <!-- Раздел добавления пользователя -->
-    <div id="add-product" class="admin-section">
+    <div class="admin-section" data-section="add-product">
         <h2>Добавить новый товар</h2>
         <form method="POST" action="{{ url_for('add_product') }}" class="admin-form">
             <div class="form-group">
@@ -111,5 +95,62 @@
             <button type="submit" class="btn-submit">➕ Добавить товар</button>
         </form>
     </div>
+
+    <!-- Раздел добавления пользователя -->
+    <div class="admin-section" data-section="add-user">
+        <h2>Добавить нового пользователя</h2>
+        <form method="POST" action="{{ url_for('add_user') }}" class="admin-form">
+            <div class="form-group">
+                <label>Имя:</label>
+                <input type="text" name="first_name" required>
+            </div>
+            <div class="form-group">
+                <label>Фамилия:</label>
+                <input type="text" name="last_name" required>
+            </div>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label>Пароль:</label>
+                <input type="password" name="password" required>
+            </div>
+            <button type="submit" class="btn-submit">➕ Добавить пользователя</button>
+        </form>
+    </div>
 </div>
-{%endblock%}
+
+<style>
+/* Скрываем все разделы кроме первого */
+.admin-section {
+    display: none;
+}
+
+/* Показываем активный раздел */
+#products-tab:checked ~ .admin-section[data-section="products"],
+#users-tab:checked ~ .admin-section[data-section="users"],
+#add-product-tab:checked ~ .admin-section[data-section="add-product"],
+#add-user-tab:checked ~ .admin-section[data-section="add-user"] {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+/* Подсветка активной кнопки */
+#products-tab:checked ~ .admin-links label[for="products-tab"],
+#users-tab:checked ~ .admin-links label[for="users-tab"],
+#add-product-tab:checked ~ .admin-links label[for="add-product-tab"],
+#add-user-tab:checked ~ .admin-links label[for="add-user-tab"] {
+    background: linear-gradient(45deg, #6d5dd3, #8a7de3);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(109, 93, 211, 0.3);
+}
+
+/* Анимация появления */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+{% endblock %}

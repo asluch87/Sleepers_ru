@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="profile-edit-container">
+    <h2>Редактирование профиля</h2>
+    {% if message %}
+    <div class="success-message">
+        {{ message }}
+    </div>
+    {% endif %}
+    
+    <form method="POST" action="/edit_profil" class="profile-form">
+        <div class="profile-header">
+            <h3>Профиль пользователя: {{ user.first_name }}</h3>
+        </div>
+        
+        <div class="form-fields">
+            <div class="form-row">
+                <label>Имя:</label>
+                <input type="text" name="first_name" value="{{ user.first_name }}" class="form-input">
+            </div>
+            
+            <div class="form-row">
+                <label>Фамилия:</label>
+                <input type="text" name="last_name" value="{{ user.last_name }}" class="form-input">
+            </div>
+            
+            <div class="form-row">
+                <label>Email:</label>
+                <input type="email" name="email" value="{{ user.email }}" class="form-input">
+            </div>
+            
+            <div class="form-row">
+                <label>Телефон:</label>
+                <input type="tel" name="phone" value="{{ phone_number if phone_number else '' }}" 
+                       placeholder="+7 (XXX) XXX-XX-XX" class="form-input">
+            </div>
+            
+            <div class="form-row">
+                <label>Адрес доставки:</label>
+                <input type="text" name="address" value="{{ user[6] if user[6] else '' }}" 
+                       placeholder="Укажите адрес доставки" class="form-input">
+            </div>
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="save-btn">
+                💾 Сохранить все изменения
+            </button>
+            
+            <form method="POST" action="{{ url_for('delete_user', user_id=user.id) }}" class="delete-form">
+                <button type="submit" class="delete-btn" 
+                    onclick="return confirm('Вы уверены, что хотите удалить свой профиль? Это действие нельзя отменить!')">
+                    🗑️ Удалить профиль
+                </button>
+            </form>
+        </div>
+    </form>
+</div>
+{% endblock %}

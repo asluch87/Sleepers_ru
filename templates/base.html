@@ -5,12 +5,14 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+ 
     <nav>
         <div class="nav-container">
             <h1><a href="{{ url_for('index') }}">B2B Тапочки</a></h1>
             <div class="nav-links">
     {% if session.id %}
-        <span class="user-badge">{{ session.first_name }}</span>
+        <a href="{{ url_for('edit_profil') }}" class="nav-item">
+        <span class="user-badge">{{ session.first_name }}</span> </a>
         <a href="{{ url_for('inbox') }}" class="nav-item">
             <span class="nav-icon">🛒</span>
             Корзина
@@ -36,23 +38,27 @@
         Админ-панель
     </a>
     {% endif %}
-
-
-
 </div>
         </div>
     </nav>
 
     <div class="container">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="flash {{ category }}">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+ 
 
         {% block content %}{% endblock %}
     </div>
+
+    <!-- Автоочистка flash сообщений через 5 секунд -->
+    <script>
+        setTimeout(function() {
+            const flashMessages = document.querySelectorAll('.flash');
+            flashMessages.forEach(function(message) {
+                message.style.opacity = '0';
+                setTimeout(function() {
+                    message.remove();
+                }, 500);
+            });
+        }, 5000);
+    </script>
 </body>
 </html>
