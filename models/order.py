@@ -5,7 +5,6 @@ from sqlalchemy.orm import Relationship
 
 class Order(Base):
     __tablename__ = 'orders' 
-    
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     order_status_id = Column(Integer, ForeignKey('order_statuses.id'), nullable=False)

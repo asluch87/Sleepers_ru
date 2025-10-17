@@ -6,6 +6,7 @@ app.secret_key = 'your-secret-key-here'# без этого проблема с �
 from models.product import Product
 from database import get_db_connection
 
+
 # из созданных
 #from database import init_db
 from auth import login_user, register_user, logout_user,edit_profil_users,get_user_by_id

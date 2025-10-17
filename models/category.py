@@ -5,7 +5,6 @@ from sqlalchemy.orm import Relationship
 
 class Category(Base):
     __tablename__ = 'categories' 
-    
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
     slug = Column(String(255), nullable=False, unique=True)

@@ -85,6 +85,7 @@ def add_users():
             print(f" Пользователь с email {email_form} уже существует")
             return False
         
+        
         # Создаем объект пользователя
         New_User_admin = User(
             email=email_form, 
@@ -102,7 +103,7 @@ def add_users():
         print(f" Пользователь {first_name_form} {last_name_form} успешно добавлен")
         return True
    
-   
+
     except Exception as e:
         print(f" Ошибка при добавлении пользователя: {e}")
         import traceback

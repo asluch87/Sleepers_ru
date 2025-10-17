@@ -12,6 +12,7 @@ def login_user():
     hash_password_form = hash_password(password_form) #хешируем пароль для сравнения в сессиях
 
 
+
     session_WEB = get_db_connection() 
     userrs_obj = session_WEB.query(User).filter(User.password_hash == hash_password_form,first_name_form == User.first_name).first()
 

@@ -6,6 +6,7 @@
 </head>
 <body>
  
+    
     <nav>
         <div class="nav-container">
             <h1><a href="{{ url_for('index') }}">B2B Тапочки</a></h1>
@@ -21,7 +22,7 @@
             <span class="nav-icon">⏻</span>
             Выйти
         </a>
-        
+
     {% else %}
         <a href="{{ url_for('login') }}" class="nav-item">
             <span class="nav-icon">→</span>
