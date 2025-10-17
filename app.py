@@ -13,6 +13,8 @@ from products import get_products, get_product
 from admin import admin_panel, add_products, delete_product ,add_users
 from basket import  create_order_product, get_basket_items,del_basket_items
 from models import User
+from datetime import datetime
+from payment_service import process_order
 
 # Главная страница
 @app.route('/')
@@ -61,8 +63,8 @@ def inbox():
         flash('Войдите в систему', 'error')
         return redirect(url_for('login'))
     
-    basket_items, total = get_basket_items(session['id'])
-    return render_template('inbox.html', basket_items=basket_items, total=total)
+    basket_items, total, total_quantity = get_basket_items(session['id'])
+    return render_template('inbox.html', basket_items=basket_items, total=total, total_quantity=total_quantity)
  
 # Создание заказа
 @app.route('/create_order/<int:product_id>', methods=['POST'])
@@ -154,7 +156,7 @@ def edit_profil():
     
     # GET запрос
     message = request.args.get('message')
-    from auth import get_user_by_id
+   
     user = get_user_by_id(session['id'])
     return render_template('edit_profil.html', user=user, message=message)
 
@@ -175,9 +177,28 @@ def delete_user(user_id):
 
 
 #Оплата и доставка
-@app.route('/delivery_Payment',methods = ['GET','POST'])
+@app.route('/delivery_Payment', methods=['GET','POST'])
 def delivery_Payment():
- return render_template('delivery_Payment.html')  
+    if 'id' not in session:
+        flash('Войдите в систему', 'error')
+        return redirect(url_for('login'))
+    
+    basket_items, total, total_quantity = get_basket_items(session['id'])
+    
+    # Генерируем временный ID заказа для отображения
+    order_id = f"temp-{session['id']}-{int(datetime.now().timestamp())}"
+    
+    return render_template('delivery_Payment.html', 
+                         basket_items=basket_items, 
+                         total=total, 
+                         total_quantity=total_quantity,
+                         order_id=order_id)
+
+
+    
+
+
+
 
 
 
@@ -223,6 +244,64 @@ def edit_user(user_id):
         return render_template('edit_user.html', user=user)
     finally:
         Session_DB.close()
+
+
+
+
+
+@app.route('/process_payment', methods=['POST'])
+def process_payment():
+    if 'id' not in session:
+        flash('Войдите в систему', 'error')
+        return redirect(url_for('login'))
+    
+    try:
+        # данные из формы
+        payment_method = request.form.get('payment_method')
+        card_data = {
+            'card_number': request.form.get('card_number'),
+            'expiry_date': request.form.get('expiry_date'),
+            'cvv': request.form.get('cvv'),
+            'card_holder': request.form.get('card_holder')
+        }
+        
+        # Получаем общую сумму
+        basket_items, total, total_quantity = get_basket_items(session['id'])
+        
+       
+        
+        # Обрабатываем заказ 
+        success, order_number, message = process_order(
+            user_id=session['id'],
+            total_amount=total,
+            payment_method=payment_method,
+            card_data=card_data
+        )
+        
+        if success:
+            flash(message, 'success')
+            return redirect(url_for('order_confirmation', order_number=order_number))
+        else:
+            flash(message, 'error')
+            return redirect(url_for('delivery_Payment'))
+            
+    except Exception as e:
+        flash(f'Ошибка при обработке заказа: {str(e)}', 'error')
+        return redirect(url_for('delivery_Payment'))  
+
+@app.route('/order_confirmation/<order_number>')
+def order_confirmation(order_number):
+    """Страница подтверждения заказа"""
+    if 'id' not in session:
+        flash('Войдите в систему', 'error')
+        return redirect(url_for('login'))
+    
+    return render_template('order_confirmation.html', order_number=order_number)
+
+
+
+
+
 
 
 if __name__ == '__main__':

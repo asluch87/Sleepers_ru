@@ -32,7 +32,7 @@ def add_products():
         # Генерируем SKU
         sku = f"SLIP-{name_form.upper().replace(' ', '-')}-001"
 
-        # Открываем сессию с БД для работы с БД
+        #для работы с БД
         Session_DB = get_db_connection()
              # Готовим объект экземпляра класса
         new_product = Product(

@@ -1,4 +1,4 @@
-# %s -Параметр передаваемый в запрос , чтобы чне лазить в гугл пишу тут.
+
 
 from database import get_db_connection
 from models.user import User
@@ -44,7 +44,7 @@ def get_product(product_id): # Получение одного продукта
         Session_BD = get_db_connection()
         query = Session_BD.query(Product).filter(
             Product.id == product_id, 
-            Product.is_active == True  # ← И ЗДЕСЬ ТОЖЕ
+            Product.is_active == True  
         ).first()
         if query:
         

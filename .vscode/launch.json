@@ -1,11 +1,15 @@
 {
+    "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python Debugger: Current File",
-            "type": "debugpy",
+            "name": "Python: Flask",
+            "type": "python",
             "request": "launch",
-            "program": "${file}",
-            "console": "integratedTerminal"
+            "program": "app.py",
+            "console": "integratedTerminal",
+            "env": {
+                "FLASK_DEBUG": "1"
+            }
         }
     ]
 }

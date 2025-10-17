@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="success-card">
+        <div class="success-icon">✅</div>
+        <h1>Заказ успешно оформлен!</h1>
+        <p class="order-number">Номер вашего заказа: <strong>{{ order_number }}</strong></p>
+        
+        <div class="order-details">
+            <p>Спасибо за ваш заказ! Мы свяжемся с вами для подтверждения.</p>
+            <p>Статус заказа можно отслеживать в личном кабинете.</p>
+        </div>
+        
+        <div class="action-buttons">
+            <a href="/" class="btn-submit">Вернуться на главную</a>
+            <a href="/inbox" class="back-link">Корзина</a>
+        </div>
+    </div>
+</div>
+
+<style>
+.success-card {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 3rem;
+    border-radius: 15px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    margin: 2rem auto;
+    max-width: 600px;
+}
+
+.success-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+}
+
+.success-card h1 {
+    color: #38a169;
+    margin-bottom: 1rem;
+}
+
+.order-number {
+    font-size: 1.3rem;
+    color: #4a5568;
+    margin-bottom: 2rem;
+}
+
+.order-details {
+    background: rgba(56, 161, 105, 0.1);
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+</style>
+{% endblock %}

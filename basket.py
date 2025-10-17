@@ -7,9 +7,9 @@ def get_basket_items(user_id):
         query = session_DB.query(Product,Basket.quantity).join(Basket, Product.id == Basket.product_id ).filter(Basket.user_id == user_id).all()
        
         Total_sum = sum(product.price * quantity  for product, quantity in query )
+        total_quantity = sum(quantity for product, quantity in query)  # ← общее количество
         
-        
-        return query, Total_sum
+        return query, Total_sum, total_quantity
     finally:
         session_DB.close()
 
