@@ -14,6 +14,7 @@ def get_basket_items(user_id):
         session_DB.close()
 
 
+
  
 def del_basket_items(user_id, product_id):
     try:

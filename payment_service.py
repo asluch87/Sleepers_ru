@@ -16,6 +16,7 @@ def process_order(user_id, total_amount, payment_method, card_data=None):
         
         print(f"Заказ создан: {order_number}")
         
+        
         # Обрабатываем платеж
         payment_success, payment_message = process_payment(payment_method, card_data)
         

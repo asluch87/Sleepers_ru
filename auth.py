@@ -28,6 +28,7 @@ def login_user():
     session_WEB.close()
 
 
+
 def register_user():
     first_name_form = request.form['first_name']
     last_name_form = request.form['last_name']

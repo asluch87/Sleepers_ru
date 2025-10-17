@@ -5,6 +5,7 @@ from sqlalchemy.orm import Relationship
 class OrderStatus(Base):
     __tablename__ = 'order_statuses'
     
+    
     id = Column(Integer, primary_key=True)
     status = Column(String(50), nullable=False, unique=True)
     description = Column(Text)

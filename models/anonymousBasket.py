@@ -4,7 +4,7 @@ from sqlalchemy.orm import Relationship
 from models import Base
 
 class AnonymousBasket(Base):
-    __tablename__ = 'anonymous_basket'
+    __tablename__ = 'anonymous_basket' 
     
     id = Column(Integer, primary_key=True)
     session_id = Column(String(255), nullable=False)

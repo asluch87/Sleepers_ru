@@ -4,6 +4,8 @@ from models import Base
 
 class Setting(Base):
     __tablename__ = 'settings'
+
+    
     
     id = Column(Integer, primary_key=True)
     setting_key = Column(String(255), nullable=False, unique=True)

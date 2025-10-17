@@ -21,6 +21,7 @@ def get_products(search='', min_price='', max_price=''): # Получение в
                 )
             )
         
+        
         if min_price:
             query = query.filter(Product.price >= float(min_price))
         

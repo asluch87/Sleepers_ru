@@ -3,7 +3,7 @@ from sqlalchemy.sql import func
 from sqlalchemy.orm import Relationship
 from models import Base
 
-class Basket(Base):
+class Basket(Base): 
     __tablename__ = 'basket'
     
     id = Column(Integer, primary_key=True)
