@@ -15,11 +15,7 @@ def get_db_connection():
     # Получаем все данные из переменных окружения
     db_user = os.getenv('DB_USER', 'postgres')  
     db_password = os.getenv('DB_PASSWORD')
-<<<<<<< Updated upstream
-    db_host = os.getenv('DB_HOST', 'localhost')
-=======
-    db_host = os.getenv('DB_HOST', 'asluchSetevoeChranSluch')
->>>>>>> Stashed changes
+    db_host = os.getenv('DB_HOST', '192.168.1.132')
     db_port = os.getenv('DB_PORT', '5432')
     db_name = os.getenv('DB_NAME', 'PROD_Suppliers')
     

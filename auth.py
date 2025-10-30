@@ -2,32 +2,44 @@ from flask import request, session, flash, redirect, url_for, render_template
 from database import get_db_connection
 import hashlib
 from models import User
+from sqlalchemy.exc import SQLAlchemyError
 
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
-
 def login_user():
+<<<<<<< Updated upstream
     first_name_form = request.form['first_name'] #Получаем имя пользователя с формы
     password_form = request.form['password']#Получаем пароль с формы
     hash_password_form = hash_password(password_form) #хешируем пароль для сравнения в сессиях
 
 
 
+=======
+    first_name_form = request.form['first_name']  # Получаем имя пользователя с формы
+    password_form = request.form['password']  # Получаем пароль с формы
+    hash_password_form = hash_password(password_form)  # хешируем пароль для сравнения в сессиях
+>>>>>>> Stashed changes
     session_WEB = get_db_connection() 
-    userrs_obj = session_WEB.query(User).filter(User.password_hash == hash_password_form,first_name_form == User.first_name).first()
+    
+    try:
+        userrs_obj = session_WEB.query(User).filter(
+            User.password_hash == hash_password_form, 
+            User.first_name == first_name_form  # Исправил порядок сравнения
+        ).first()
 
-#Проверяем а тот ли пользователь логиниться и запоминаем его в сессию.
-    if userrs_obj:
-        session['id'] = userrs_obj.id
-        session['first_name'] = userrs_obj.first_name
-        session['role_id'] = userrs_obj.role_id
-        flash('Вы успешно вошли!', 'success')
-        return redirect(url_for('index'))
-    else:
+        # Проверяем а тот ли пользователь логиниться и запоминаем его в сессию.
+        if userrs_obj:
+            session['id'] = userrs_obj.id
+            session['first_name'] = userrs_obj.first_name
+            session['role_id'] = userrs_obj.role_id
+            flash('Вы успешно вошли!', 'success')
+            return redirect(url_for('index'))
+        else:
             flash('Неверный логин или пароль', 'error')
             return render_template('login.html')
-    session_WEB.close()
-
+    
+    finally:
+        session_WEB.close() 
 
 
 def register_user():
@@ -68,11 +80,11 @@ def logout_user():
 def edit_profil_users():
     if request.method != 'POST':
         return False
-    
     if 'id' not in session:
         flash('Требуется авторизация', 'error')
         return False
     
+    # Получаем данные формы
     first_name_form = request.form.get('first_name')
     last_name_form = request.form.get('last_name')
     email_form = request.form.get('email')
@@ -81,30 +93,32 @@ def edit_profil_users():
     
     session_BD = get_db_connection()
     
-    try:
-        current_user = session_BD.query(User).filter(User.id == current_user_id).first()
-        
-        if not current_user:
-            flash('Пользователь не найден', 'error')
+    # Находим пользователя
+    current_user = session_BD.query(User).filter(User.id == current_user_id).first()
+    if not current_user:
+        flash('Пользователь не найден', 'error')
+        session_BD.close()
+        return False
+    
+    # Проверяем email только если он изменился
+    if email_form != current_user.email:
+        existing_user = session_BD.query(User)\
+            .filter(
+                User.email == email_form,
+                User.id != current_user_id  
+            )\
+            .first()
+        if existing_user:
+            flash('Этот email уже используется другим пользователем', 'error')
+            session_BD.close()
             return False
-        
-        # Проверяем email только если он изменился
-        if email_form != current_user.email:
-            existing_user = session_BD.query(User)\
-                .filter(
-                    User.email == email_form,
-                    User.id != current_user_id  
-                )\
-                .first()
-            if existing_user:
-                flash('Этот email уже используется другим пользователем', 'error')
-                return False  # ← Только здесь возвращаем False
-        
-        # Обновляем данные (достигается только если email проверка пройдена)
+    
+    try:
+        # ТОЛЬКО операции записи в БД
         current_user.first_name = first_name_form
         current_user.last_name = last_name_form
         current_user.email = email_form
-        if phone_number_form is not None:  # Добавляем phone_number
+        if phone_number_form is not None:
             current_user.phone_number = phone_number_form
         
         session_BD.commit()
@@ -116,12 +130,12 @@ def edit_profil_users():
         flash('Профиль успешно обновлен', 'success')
         return True  
         
-    except Exception as e:
+    except SQLAlchemyError as e:  # Только ошибки SQLAlchemy
         session_BD.rollback()
-        flash(f'Ошибка обновления: {str(e)}', 'error')
+        flash(f'Ошибка базы данных: {str(e)}', 'error')
         return False
     finally:
-        session_BD.close()    
+        session_BD.close()
 
 def get_user_by_id(user_id):  #Находим пользователя
     try:
@@ -163,12 +177,16 @@ def delete_user_profile(user_id):
         flash('Профиль успешно удален', 'success')
         return True
         
+    except SQLAlchemyError as e:  # Специфичные для БД ошибки
+        session_DB.rollback()
+        flash(f'Ошибка базы данных при удалении: {str(e)}', 'error')
+        return False
     except Exception as e:
         session_DB.rollback()
-        flash(f'Ошибка удаления: {str(e)}', 'error')
+        flash(f'Неожиданная ошибка: {str(e)}', 'error')
         return False
     finally:
-        session_DB.close()        
+        session_DB.close()      
         
         
 
