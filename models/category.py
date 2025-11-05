@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, Boolean, ForeignKey,DATETIME
+from sqlalchemy import Column, Integer, String, Text, Boolean, ForeignKey,DATETIME,DateTime
 from sqlalchemy.sql import func
 from models import Base
 from sqlalchemy.orm import Relationship
@@ -12,7 +12,7 @@ class Category(Base):
     parent_category_id = Column(Integer, ForeignKey('categories.id'))
     is_active = Column(Boolean, default=True)
     sort_order = Column(Integer, default=0)
-    created_at = Column(DATETIME(timezone=False), server_default=func.now())
+    created_at = Column(DateTime(timezone=False), server_default=func.now())
     
     # Для подкатегорий
     parent = Relationship("Category", remote_side=[id])

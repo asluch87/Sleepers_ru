@@ -5,19 +5,19 @@ from models.user import User
 from models.product import Product
 from sqlalchemy import or_
 
-<<<<<<< Updated upstream
+
 def get_products(search='', min_price='', max_price=''): # Получение всех проудктов для магазина страницы товаров
     Session_DB = get_db_connection()
     
     
-=======
+
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import or_
 
 def get_products(search='', min_price='', max_price=''):
     """Получение всех продуктов для магазина страницы товаров"""
     Session_DB = None
->>>>>>> Stashed changes
+
     try:
         Session_DB = get_db_connection()
         
@@ -72,6 +72,7 @@ def get_product(product_id): # Получение одного продукта
             return None
     finally:
         Session_BD.close()     
+
 
 
 

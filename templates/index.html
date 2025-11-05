@@ -2,13 +2,25 @@
 
 {% block content %}
 
-
 {% if message %}
     <div class="message" style="padding: 10px; background: #d4ffd4; color: green; border-radius: 4px; margin-bottom: 15px;">
         {{ message }}
         </div>
 {% endif %}
-   
+
+
+<div class="company-hero">
+    <div class="hero-content">
+        <h1>B2B Тапочки Оптом</h1>
+        <p class="hero-subtitle">Гостиничные тапочки для отелей, спа-салонов и бизнеса</p>
+        <div class="hero-features">
+            <span class="hero-badge"> Отели</span>
+            <span class="hero-badge"> Спа-салоны</span>
+            <span class="hero-badge"> Бизнес</span>
+        </div>
+    </div>
+</div>
+
 <div class="search-form">
     <form method="GET">
         <input type="text" name="search" placeholder="Поиск товаров..." value="{{ search }}">
@@ -17,7 +29,6 @@
         <button type="submit">Найти</button>
     </form>
 </div> 
-
 
 <div class="products-grid">
     {% for product in products %}

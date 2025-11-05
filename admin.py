@@ -1,19 +1,21 @@
 from flask import request, session
 from database import get_db_connection
-from models import User,Product
+from models import User, Product
 from sqlalchemy import Time
 from sqlalchemy.exc import SQLAlchemyError
 
 def admin_panel():
     try:
         Session_DB = get_db_connection()
-        admins = Session_DB.query(User).filter(User.role_id == 2 ).all()
+        admins = Session_DB.query(User).filter(User.role_id == 2).all()
         return admins
+    except SQLAlchemyError as e:
+        print(f"Ошибка при получении списка админов: {e}")
+        return []
     finally:
-        Session_DB.close() 
+        if Session_DB:
+            Session_DB.close()
 
-    
-        
 # Добавление товара в Админке
 def add_products():
     # Получаем данные с формы
@@ -29,13 +31,8 @@ def add_products():
     # Генерируем SKU
     sku = f"SLIP-{name_form.upper().replace(' ', '-')}-001"
 
-<<<<<<< Updated upstream
-        #для работы с БД
-=======
     Session_DB = None
     try:
-        # ТОЛЬКО работа с БД в try
->>>>>>> Stashed changes
         Session_DB = get_db_connection()
         new_product = Product(
             name=name_form,
@@ -54,38 +51,34 @@ def add_products():
         Session_DB.commit()
         return True
         
-    except SQLAlchemyError as e:  # Только ошибки БД
+    except SQLAlchemyError as e:
         if Session_DB:
             Session_DB.rollback()
+        print(f"Ошибка при добавлении товара: {e}")
         return False
     finally: 
         if Session_DB:
             Session_DB.close()
-            
-        
 
-#Добавление пользователя Админка
-
+# Добавление пользователя Админка
 def add_users():
-<<<<<<< Updated upstream
+    # Получаем данные с формы
+    first_name_form = request.form['first_name']
+    last_name_form = request.form['last_name']
+    email_form = request.form['email']
+    password_form = request.form['password']
+    role_id = 2  # Админ
+    is_active = True
+    
+    Session_DB = None
     try:
-        # Получаем данные с формы
-        first_name_form = request.form['first_name']
-        last_name_form = request.form['last_name']
-        email_form = request.form['email']
-        password_form = request.form['password']
-        role_id = 2  # Админ
-        is_active = True
-        
-        # Открываем сессию с БД
         Session_DB = get_db_connection()
         
         # Проверяем, нет ли уже пользователя с таким email
         existing_user = Session_DB.query(User).filter_by(email=email_form).first()
         if existing_user:
-            print(f" Пользователь с email {email_form} уже существует")
+            print(f"Пользователь с email {email_form} уже существует")
             return False
-        
         
         # Создаем объект пользователя
         New_User_admin = User(
@@ -97,69 +90,27 @@ def add_users():
             is_active=is_active
         )
         
-        # Добавляем в БД
-=======
-    
-    # Получаем данные с формы
-    first_name_form = request.form['first_name']
-    last_name_form = request.form['last_name']
-    email_form = request.form['email']
-    password_form = request.form['password']
-    role_id = 2  # Админ
-    is_active = True
-    
-    # Открываем сессию с БД
-    Session_DB = get_db_connection()
-    
-    # Проверяем, нет ли уже пользователя с таким email
-    existing_user = Session_DB.query(User).filter_by(email=email_form).first()
-    if existing_user:
-        print(f" Пользователь с email {email_form} уже существует")
-        Session_DB.close()
-        return False
-    
-    
-    # Создаем объект пользователя
-    New_User_admin = User(
-        email=email_form, 
-        password_hash=password_form, 
-        first_name=first_name_form, 
-        last_name=last_name_form,
-        role_id=role_id,
-        is_active=is_active
-    )
-    
-    try:   
-        # ТОЛЬКО операции с БД
->>>>>>> Stashed changes
         Session_DB.add(New_User_admin)
         Session_DB.commit()
         
-        print(f" Пользователь {first_name_form} {last_name_form} успешно добавлен")
+        print(f"Пользователь {first_name_form} {last_name_form} успешно добавлен")
         return True
-   
-<<<<<<< Updated upstream
 
-    except Exception as e:
-        print(f" Ошибка при добавлении пользователя: {e}")
-=======
-    except SQLAlchemyError as e:  # Только ошибки SQLAlchemy
-        print(f" Ошибка БД при добавлении пользователя: {e}")
->>>>>>> Stashed changes
-        import traceback
-        traceback.print_exc()
-        Session_DB.rollback()
+    except SQLAlchemyError as e:
+        print(f"Ошибка БД при добавлении пользователя: {e}")
+        if Session_DB:
+            Session_DB.rollback()
         return False
     finally:
-        Session_DB.close()
-   
+        if Session_DB:
+            Session_DB.close()
 
- 
 def delete_product(product_id):
+    Session_DB = None
     try:
-        Session_DB = get_db_connection()   # Открываем сессию с БД для работы с БД
-        find_product_DEL = Session_DB.query(Product).filter(Product.id == product_id).first() # ищем продукт который будем удалять по id
-        if find_product_DEL: # если не пусто то удаляем
+        Session_DB = get_db_connection()
+        find_product_DEL = Session_DB.query(Product).filter(Product.id == product_id).first()
+        if find_product_DEL:
             Session_DB.delete(find_product_DEL)
             Session_DB.commit()
             return True
@@ -171,6 +122,5 @@ def delete_product(product_id):
             Session_DB.rollback()
         return False
     finally:
-     if Session_DB:
-        Session_DB.close()
-
+        if Session_DB:
+            Session_DB.close()

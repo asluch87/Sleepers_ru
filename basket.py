@@ -10,21 +10,22 @@ def get_basket_items(user_id):
         query = session_DB.query(Product,Basket.quantity).join(Basket, Product.id == Basket.product_id ).filter(Basket.user_id == user_id).all()
        
         Total_sum = sum(product.price * quantity  for product, quantity in query )
-<<<<<<< Updated upstream
+
         total_quantity = sum(quantity for product, quantity in query)  # ← общее количество
         
         return query, Total_sum, total_quantity
-=======
+
         total_quantity = sum(quantity for product, quantity in query)
         
         return query, Total_sum, total_quantity
     except SQLAlchemyError as e:
         print(f"Ошибка БД при получении корзины: {e}")
         return [], 0, 0
->>>>>>> Stashed changes
+
     finally:
         if session_DB:
             session_DB.close()
+
 
 
 

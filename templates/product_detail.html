@@ -22,7 +22,8 @@
         <p class="description">{{ product.description }}</p>
          
         {% if session.id %}
-        <form method="POST" action="{{ url_for('add_to_cart', product_id=product.id) }}" class="order-form">
+        <!-- ИСПРАВЛЕННАЯ СТРОКА: add_to_cart → create_order_route -->
+        <form method="POST" action="{{ url_for('create_order_route', product_id=product.id) }}" class="order-form">
             <label>Количество:</label>
             <input type="number" name="quantity" value="1" min="1" max="{{ product.stock_quantity }}">
             <button type="submit" class="btn">Добавить в корзину</button>
@@ -32,7 +33,6 @@
         {% endif %}
     </div>
 </div>
-
 
 <br><br>
 <a href="{{ url_for('index') }}" class="back-link">← Назад к каталогу</a>

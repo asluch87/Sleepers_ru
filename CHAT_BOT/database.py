@@ -11,6 +11,7 @@ load_dotenv()
 
 
 
+
 def get_db_connection():
     # Получаем все данные из переменных окружения
     db_user = os.getenv('DB_USER', 'postgres')  
