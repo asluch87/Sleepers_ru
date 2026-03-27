@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="cart-container">
+    <div class="cart-header">
+        <h1>🛒 Корзина покупок</h1>
+    </div>
+    
+    {% if basket_items %}
+    <div class="cart-table">
+        <div class="cart-table-header">
+            <div class="col-product">Товар</div>
+            <div class="col-price">Цена</div>
+            <div class="col-quantity">Количество</div>
+            <div class="col-total">Сумма</div>
+            <div class="col-actions">Удалить</div>  
+        </div>
+         
+        <div class="cart-items">
+            {% for item in basket_items %}
+            {% set product = item[0] %}
+            {% set quantity = item[1] %}
+            <div class="cart-item">
+                <div class="col-product">
+                    <div class="product-info">
+                        <div class="product-name">{{ product.name }}</div>
+                        <div class="product-supplier">Поставщик: {{ product.supplier }}</div>
+                    </div>
+                </div>
+                <div class="col-price">
+                    <span class="price">{{ product.price }} ₽</span>
+                </div>
+                <div class="col-quantity">
+                    <span class="quantity">{{ quantity }} шт.</span> 
+                </div>
+                <div class="col-total">
+                    <span class="item-total">{{ (product.price * quantity) | round(2) }} ₽</span>
+                </div>
+                <div class="col-actions">
+                    <form method="POST" action="{{ url_for('delete_from_basket', product_id=product.id) }}" style="display: inline;">
+                        <button type="submit" class="btn-delete" onclick="return confirm('Удалить товар из корзины?')">
+                            🗑️ Удалить
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="cart-footer">
+            <div class="cart-summary">
+                <div class="summary-row">
+                    <span>Итого:</span>
+                    <span class="total-amount">{{ total }} ₽</span>
+                </div>
+            </div>
+            
+            
+            <div class="cart-actions">
+                <a href="{{ url_for('index') }}" class="btn-continue">← Продолжить покупки</a>
+                <a href="{{ url_for('delivery_Payment') }}" class="btn-checkout">Оформить Заказ</a>
+            </div>
+        </div>
+    </div>
+    
+
+    {% else %}
+    <div class="empty-cart">
+        <div class="empty-icon">🛒</div>
+        <h2>Ваша корзина пуста</h2>
+        <p>Добавьте товары из каталога</p>
+        <a href="{{ url_for('index') }}" class="btn-primary">Перейти к покупкам</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

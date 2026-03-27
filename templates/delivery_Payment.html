@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/payment.css') }}">
+
+<div class="container">
+    <!-- Заголовок -->
+    <div class="payment-header">
+        <h1>💳 Способ оплаты</h1>
+        <p class="payment-subtitle">Выберите удобный для вас способ оплаты заказа</p>
+    </div>
+
+    <!-- Отладочная информация -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert alert-info">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Информация о заказе -->
+    <div class="order-info-card">
+        <div class="order-info-header">
+            <h2><i class="nav-icon">📋</i> Информация о заказе</h2>
+        </div>
+        <div class="order-info-content">
+            <div class="order-details">
+                <div class="order-detail-item">
+                    <p><strong>Сумма к оплате:</strong> <span class="total-amount">{{ total if total else '0' }} руб.</span></p>
+                </div>
+                <div class="order-detail-item">
+                    <p><strong>Товаров в заказе:</strong> {{ total_quantity if total_quantity else '0' }}</p>
+                    <p><strong>Способ доставки:</strong> Курьером</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Способы оплаты -->
+    <div class="payment-methods-card">
+        <div class="payment-methods-header">
+            <h2><i class="nav-icon">💳</i> Выберите способ оплаты</h2>
+        </div>
+        <div class="payment-methods-content">
+            <form method="POST" action="{{ url_for('process_payment') }}" class="payment-form">
+                <!-- Банковская карта -->
+                <div class="payment-option">
+                    <input type="radio" name="payment_method" id="card" value="card" checked>
+                    <label class="form-check-label" for="card">
+                        <i class="nav-icon">💳</i> Банковская карта
+                    </label>
+                    <div class="card-details">
+                        <div class="form-group">
+                            <label>Номер карты</label>
+                            <input type="text" name="card_number" class="form-control" placeholder="0000 0000 0000 0000" maxlength="19" required>
+                        </div>
+                        <div class="card-details-row">
+                            <div class="form-group">
+                                <label>Срок действия</label>
+                                <input type="text" name="expiry_date" class="form-control" placeholder="ММ/ГГ" maxlength="5" required>
+                            </div>
+                            <div class="form-group">
+                                <label>CVV</label>
+                                <input type="text" name="cvv" class="form-control" placeholder="000" maxlength="3" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Имя владельца</label>
+                            <input type="text" name="card_holder" class="form-control" placeholder="IVAN IVANOV" required>
+                        </div>
+                        <div class="security-notice">
+                            <i class="nav-icon">🔒</i> Оплата защищена SSL-шифрованием
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Наличными -->
+                <div class="payment-option">
+                    <input type="radio" name="payment_method" id="cash" value="cash">
+                    <label class="form-check-label" for="cash">
+                        <i class="nav-icon">💵</i> Наличными при получении
+                    </label>
+                    <div class="cash-details">
+                        <p>Оплата наличными курьеру при получении заказа</p>
+                    </div>
+                </div>
+
+                <!-- Кнопка оплаты -->
+                <div class="payment-actions">
+                    <button type="submit" class="payment-btn-submit">
+                        <i class="nav-icon">✓</i> Оплатить заказ
+                    </button>
+                    <a href="/inbox" class="payment-back-link">
+                        <i class="nav-icon">←</i> Вернуться в корзину
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Добавьте отладочный скрипт -->
+<script>
+console.log('Payment page loaded');
+console.log('Total amount: {{ total }}');
+console.log('Total quantity: {{ total_quantity }}');
+
+// Логирование отправки формы
+document.querySelector('.payment-form').addEventListener('submit', function(e) {
+    console.log('Form submitted');
+    console.log('Payment method:', document.querySelector('input[name="payment_method"]:checked').value);
+});
+</script>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if message %}
+    <div class="message" style="padding: 10px; background: #d4ffd4; color: green; border-radius: 4px; margin-bottom: 15px;">
+        {{ message }}
+        </div>
+{% endif %}
+
+
+<div class="company-hero">
+    <div class="hero-content">
+        <h1>B2B Тапочки Оптом</h1>
+        <p class="hero-subtitle">Гостиничные тапочки для отелей, спа-салонов и бизнеса</p>
+        <div class="hero-features">
+            <span class="hero-badge"> Отели</span>
+            <span class="hero-badge"> Спа-салоны</span>
+            <span class="hero-badge"> Бизнес</span>
+        </div>
+    </div>
+</div>
+
+<div class="search-form">
+    <form method="GET">
+        <input type="text" name="search" placeholder="Поиск товаров..." value="{{ search }}">
+        <input type="number" name="min_price" placeholder="Цена от" value="{{ min_price }}">
+        <input type="number" name="max_price" placeholder="Цена до" value="{{ max_price }}">
+        <button type="submit">Найти</button>
+    </form>
+</div> 
+
+<div class="products-grid">
+    {% for product in products %}
+    <div class="product-card">
+        {% if product.image_url %}
+           <a href="{{ url_for('product_detail', product_id=product.id) }}">
+           <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image" style="max-width: 250px; max-height: 130px;">
+        </a>
+        {% endif %} 
+        <h3>{{ product.name }}</h3>
+        <p class="price">{{ product.price }} руб.</p>
+        <p class="stock">В наличии: {{ product.stock_quantity }} шт.</p>
+        <p class="supplier">Поставщик: {{ product.supplier }}</p>
+        
+        <div class="product-actions">
+            <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn">Подробнее</a>
+            
+            {% if session.id %}
+            <form method="POST" action="{{ url_for('create_order_route', product_id=product.id) }}">
+                <input type="number" name="quantity" value="1" min="1" max="{{ product.stock_quantity }}">
+                <br><br>
+                <button type="submit">Заказать</button>
+            </form>
+            {% else %}
+            <p><a href="{{ url_for('login') }}">Войдите</a> чтобы сделать заказ</p>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

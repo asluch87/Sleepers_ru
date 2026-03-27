@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="product-detail">
+    <h1>{{ product.name }}</h1>
+    
+    {% if product.image_url %}
+    <div class="product-image-container">
+        <img src="{{ url_for('static', filename=product.image_url.replace('static/', '')) }}" alt="{{ product.name }}" class="product-image" style="max-width: 500px; max-height: 400px;">
+    </div>
+    {% else %}
+    <div class="no-image" style="padding: 20px; background: #f0f0f0; text-align: center;">
+        Изображение отсутствует
+    </div>
+    {% endif %}
+    
+    
+    <div class="product-info">
+        <p class="price"><strong>Цена: {{ product.price }} руб.</strong></p>
+        <p class="stock">В наличии: {{ product.stock_quantity }} шт.</p>
+        <p class="supplier">Поставщик: {{ product.supplier }}</p>
+        <p class="description">{{ product.description }}</p>
+         
+        {% if session.id %}
+        <!-- ИСПРАВЛЕННАЯ СТРОКА: add_to_cart → create_order_route -->
+        <form method="POST" action="{{ url_for('create_order_route', product_id=product.id) }}" class="order-form">
+            <label>Количество:</label>
+            <input type="number" name="quantity" value="1" min="1" max="{{ product.stock_quantity }}">
+            <button type="submit" class="btn">Добавить в корзину</button>
+        </form>
+        {% else %}
+        <p><a href="{{ url_for('login') }}">Войдите</a> чтобы сделать заказ</p>
+        {% endif %}
+    </div>
+</div>
+
+<br><br>
+<a href="{{ url_for('index') }}" class="back-link">← Назад к каталогу</a>
+{% endblock %}

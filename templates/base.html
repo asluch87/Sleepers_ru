@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>B2B Тапочки Оптом</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='footer.css') }}">
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <h1><a href="{{ url_for('index') }}">B2B Тапочки</a></h1>
+            <div class="nav-links">
+    {% if session.id %}
+        <a href="{{ url_for('edit_profil') }}" class="nav-item">
+        <span class="user-badge">{{ session.first_name }}</span> </a>
+        <a href="{{ url_for('inbox') }}" class="nav-item">
+            <span class="nav-icon">🛒</span>
+            Корзина
+        </a>
+        <a href="{{ url_for('logout') }}" class="nav-item">
+            <span class="nav-icon">⏻</span>
+            Выйти
+        </a>
+    {% else %}
+        <a href="{{ url_for('login') }}" class="nav-item">
+            <span class="nav-icon">→</span>
+            Войти
+        </a>
+        <a href="{{ url_for('register') }}" class="nav-item primary">
+            <span class="nav-icon">+</span>
+            Регистрация
+        </a> 
+    {% endif %}
+
+    {% if session.role_id == 2 %}
+    <a href="{{ url_for('admin') }}" class="nav-item admin-panel">
+        <span class="nav-icon">⚙️</span>
+        Админ-панель
+    </a>
+    {% endif %}
+</div>
+        </div>
+    </nav>
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>B2B Тапочки Оптом</h3>
+                <p>Производитель качественных домашних тапочек для бизнеса</p>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Контакты</h4>
+                <p> +7 (999) 123-45-67</p>
+                <p> info@b2b-tapochki.ru</p>
+                <p> Москва, ул. Производственная, 15</p>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Информация</h4>
+                <ul>
+                    <li><a href="{{ url_for('index') }}">Главная</a></li>
+                    <li><a href="#">О компании</a></li>
+                    <li><a href="#">Доставка и оплата</a></li>
+                    <li><a href="#">Контакты</a></li>
+                </ul>
+            </div>            
+            <div class="footer-section">
+                <h4>Для клиентов</h4>
+                <ul>
+                    {% if session.id %}
+                        <li><a href="{{ url_for('edit_profil') }}">Личный кабинет</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('login') }}">Войти в аккаунт</a></li>
+                    {% endif %}
+                    <li><a href="{{ url_for('inbox') }}">Корзина</a></li>
+                    <li><a href="#">Оптовые цены</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 B2B Тапочки Оптом. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <!-- Автоочистка flash сообщений через 5 секунд -->
+    <script>
+        setTimeout(function() {
+            const flashMessages = document.querySelectorAll('.flash');
+            flashMessages.forEach(function(message) {
+                message.style.opacity = '0';
+                setTimeout(function() {
+                    message.remove();
+                }, 500);
+            });
+        }, 5000);
+    </script>
+</body>
+</html>
